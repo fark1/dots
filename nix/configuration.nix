@@ -6,8 +6,8 @@
 
 {
   imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
+    [ # Hardware-specific config is injected per-host by flake.nix, not
+      # imported here - keeps this file identical across every machine.
       ./gaming.nix
     ];
 
@@ -17,6 +17,15 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
+  # Binary cache for nix-cachyos-kernel - without this, its packages (even
+  # cached ones like linuxPackages-cachyos-latest) get compiled from source
+  # locally instead of fetched pre-built. The flake's own nixConfig is
+  # supposed to configure this automatically, but that only applies if the
+  # substituter prompt is interactively accepted, which non-interactive
+  # `sudo nixos-rebuild` never gets a chance to do - hence declaring it here.
+  nix.settings.substituters = [ "https://attic.xuyh0120.win/lantian" ];
+  nix.settings.trusted-public-keys = [ "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" ];
 
   services.openssh.enable = true;
   services.openssh.settings.PasswordAuthentication = true;
