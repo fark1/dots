@@ -20,6 +20,7 @@
     slurp
     pulseaudio
     pavucontrol
+    wlr-randr
   ];
 
   # Applies common/ from the dotfiles repo via stow on every activation.
