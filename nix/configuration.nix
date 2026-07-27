@@ -23,6 +23,13 @@
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
+  # Extra selectable boot entry (Limine menu) for the Zen kernel, alongside
+  # the default linuxPackages_latest above. cachyos isn't packaged in
+  # nixpkgs, so it's not an option here the way it is on the Artix box.
+  specialisation.zen.configuration = {
+    boot.kernelPackages = lib.mkForce pkgs.linuxPackages_zen;
+  };
+
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
@@ -38,18 +45,6 @@
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
-
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "mk_MK.UTF-8";
-    LC_IDENTIFICATION = "mk_MK.UTF-8";
-    LC_MEASUREMENT = "mk_MK.UTF-8";
-    LC_MONETARY = "mk_MK.UTF-8";
-    LC_NAME = "mk_MK.UTF-8";
-    LC_NUMERIC = "mk_MK.UTF-8";
-    LC_PAPER = "mk_MK.UTF-8";
-    LC_TELEPHONE = "mk_MK.UTF-8";
-    LC_TIME = "mk_MK.UTF-8";
-  };
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -96,6 +91,26 @@
   programs.ydotool.enable = true;
   environment.variables.YDOTOOL_SOCKET = lib.mkForce "/tmp/.ydotool_socket";
 
+  # Fonts ported from the Artix machine's pacman/manual font install.
+  # Fairfax Hax isn't here - it's not packaged in nixpkgs at all (see
+  # earlier investigation), only used by common/foot and common/alacritty
+  # for now.
+  fonts.packages = with pkgs; [
+    adwaita-fonts
+    freefont_ttf
+    noto-fonts
+    noto-fonts-color-emoji
+    dejavu_fonts
+    font-awesome
+    nerd-fonts.jetbrains-mono
+    liberation_ttf
+    roboto-mono
+    symbola
+    ubuntu-classic
+    fairfax-hd
+    scientifica
+  ];
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [ # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
@@ -107,7 +122,8 @@
     emacs
     nano
     foot
-
+    adwaita-icon-theme
+    hicolor-icon-theme
   ];
 
   # Some programs need SUID wrappers, can be configured further or are

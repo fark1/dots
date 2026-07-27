@@ -11,8 +11,6 @@
     mpv
     thunar
     stow
-    font-awesome
-    fairfax-hd
     swaybg
     foot
     fuzzel
