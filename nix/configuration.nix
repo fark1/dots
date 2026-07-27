@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   imports =
@@ -61,7 +61,7 @@
   users.users."fark" = {
     isNormalUser = true;
     description = "fark";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "ydotool" ];
     packages = with pkgs; [ ];
   };
 
@@ -88,6 +88,13 @@
     pulse.enable = true;
     wireplumber.enable = true;
   };
+
+  # ydotool: common/labwc/environment and common/zsh/.zshrc hardcode
+  # YDOTOOL_SOCKET=/tmp/.ydotool_socket to match how Artix's OpenRC service
+  # starts ydotoold, so force the same path here instead of the module's
+  # default (/run/ydotoold/socket) - keeps common/ unchanged across OSes.
+  programs.ydotool.enable = true;
+  environment.variables.YDOTOOL_SOCKET = lib.mkForce "/tmp/.ydotool_socket";
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget

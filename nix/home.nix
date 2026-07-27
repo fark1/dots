@@ -15,7 +15,11 @@
     fairfax-hd
     swaybg
     foot
-    
+    fuzzel
+    grim
+    slurp
+    pulseaudio
+    pavucontrol
   ];
 
   # Applies common/ from the dotfiles repo via stow on every activation.
@@ -29,6 +33,8 @@
       ${pkgs.stow}/bin/stow -d "$DOTS" -t "$HOME/.config" --restow \
         foot alacritty Thunar labwc mpv quickshell
       ${pkgs.stow}/bin/stow -d "$DOTS" -t "$HOME" --restow zsh
+      mkdir -p "$HOME/.local/share/themes"
+      ${pkgs.stow}/bin/stow -d "$DOTS" -t "$HOME/.local/share/themes" --restow themes
     fi
   '';
 
