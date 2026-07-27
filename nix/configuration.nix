@@ -2,12 +2,13 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, ... }:
 
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      ./gaming.nix
     ];
 
   # Bootloader.
@@ -20,6 +21,13 @@
   services.openssh.enable = true;
   services.openssh.settings.PasswordAuthentication = true;
 
+  # Adds pkgs.cachyosKernels.* (used by the cachyos specialisation below).
+  # Applied at top level, not inside the specialisation - a specialisation's
+  # configuration doesn't get its own independently-overlaid pkgs, it shares
+  # the outer one, so pkgs.cachyosKernels would be missing if this were
+  # nested in there instead.
+  nixpkgs.overlays = [ inputs.nix-cachyos-kernel.overlays.pinned ];
+
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
@@ -28,6 +36,12 @@
   # nixpkgs, so it's not an option here the way it is on the Artix box.
   specialisation.zen.configuration = {
     boot.kernelPackages = lib.mkForce pkgs.linuxPackages_zen;
+  };
+
+  # Third boot entry: CachyOS kernel, via xddxdd/nix-cachyos-kernel's
+  # pinned overlay (has its own binary cache, no local compile needed).
+  specialisation.cachyos.configuration = {
+    boot.kernelPackages = lib.mkForce pkgs.cachyosKernels.linuxPackages-cachyos-latest;
   };
 
   networking.hostName = "nixos"; # Define your hostname.
