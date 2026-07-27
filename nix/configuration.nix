@@ -49,9 +49,16 @@
 
   # Third boot entry: CachyOS kernel, via xddxdd/nix-cachyos-kernel's
   # pinned overlay (has its own binary cache, no local compile needed).
-  specialisation.cachyos.configuration = {
-    boot.kernelPackages = lib.mkForce pkgs.cachyosKernels.linuxPackages-cachyos-latest;
-  };
+  # TEMPORARILY DISABLED: nix.settings.substituters only takes effect after
+  # a generation switches, but this specialisation gets built as part of
+  # every switch (not just when it's the active one) - so the very first
+  # rebuild that adds the substituter still tries to build this using the
+  # OLD nix.conf that doesn't trust the cache yet, and falls back to
+  # compiling the kernel from source (which then fails from disk space).
+  # Re-enable once the substituter-only rebuild has succeeded once.
+  # specialisation.cachyos.configuration = {
+  #   boot.kernelPackages = lib.mkForce pkgs.cachyosKernels.linuxPackages-cachyos-latest;
+  # };
 
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -114,6 +121,25 @@
   programs.ydotool.enable = true;
   environment.variables.YDOTOOL_SOCKET = lib.mkForce "/tmp/.ydotool_socket";
 
+  # zsh: home.nix stows .zshrc/.zshenv, but the shell itself still needs to
+  # be installed and registered in /etc/shells.
+  programs.zsh.enable = true;
+
+  # AMD GPU: OpenGL/Vulkan (mesa's RADV, no separate vulkan-radeon package
+  # needed on NixOS) plus 32-bit support for gaming/Proton.
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
+  };
+
+  # Portals: screen sharing, file pickers, etc for Wayland apps. labwc's own
+  # module sets a default backend preference but doesn't enable xdg.portal
+  # or provide the wlr backend package itself - both still needed here.
+  xdg.portal = {
+    enable = true;
+    extraPortals = [ pkgs.xdg-desktop-portal-wlr ];
+  };
+
   # Fonts ported from the Artix machine's pacman/manual font install.
   # Fairfax Hax isn't here - it's not packaged in nixpkgs at all (see
   # earlier investigation), only used by common/foot and common/alacritty
@@ -147,6 +173,31 @@
     foot
     adwaita-icon-theme
     hicolor-icon-theme
+
+    # Ported from the Artix pacman -Qe list (explicitly-installed packages).
+    # Themes/cursors
+    adw-gtk3
+    phinger-cursors
+    # General utilities
+    btop
+    rsync
+    gammastep
+    wlrctl
+    obs-studio
+    android-tools
+    ntfs3g
+    alsa-utils
+    vulkan-tools
+    config.boot.kernelPackages.cpupower
+    # Dev tooling
+    clang
+    cmake
+    lld
+    llvm
+    mold
+    nasm
+    go
+    scdoc
   ];
 
   # Some programs need SUID wrappers, can be configured further or are

@@ -18,4 +18,12 @@
   # amdgpuGcnCompat is only for old GCN 1.0/2.x cards, not enabled since
   # the actual GPU generation isn't confirmed yet.
   cachyos.settings.enable = true;
+
+  programs.gamemode.enable = true;
+
+  environment.systemPackages = with pkgs; [
+    mangohud
+    wine
+    winetricks
+  ];
 }
