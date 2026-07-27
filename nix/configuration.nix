@@ -49,16 +49,9 @@
 
   # Third boot entry: CachyOS kernel, via xddxdd/nix-cachyos-kernel's
   # pinned overlay (has its own binary cache, no local compile needed).
-  # TEMPORARILY DISABLED: nix.settings.substituters only takes effect after
-  # a generation switches, but this specialisation gets built as part of
-  # every switch (not just when it's the active one) - so the very first
-  # rebuild that adds the substituter still tries to build this using the
-  # OLD nix.conf that doesn't trust the cache yet, and falls back to
-  # compiling the kernel from source (which then fails from disk space).
-  # Re-enable once the substituter-only rebuild has succeeded once.
-  # specialisation.cachyos.configuration = {
-  #   boot.kernelPackages = lib.mkForce pkgs.cachyosKernels.linuxPackages-cachyos-latest;
-  # };
+  specialisation.cachyos.configuration = {
+    boot.kernelPackages = lib.mkForce pkgs.cachyosKernels.linuxPackages-cachyos-latest;
+  };
 
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -167,7 +160,6 @@
     fastfetch
     git
     wayland
-    librewolf
     emacs
     nano
     foot

@@ -1,0 +1,70 @@
+{ config, pkgs, lib, ... }:
+
+let
+  # "Dark Theme" (AMO slug: perfectdarktheme) - the static theme extension
+  # actually active in the real profile (extensions.activeThemeID). Not in
+  # NUR's curated firefox-addons list (niche, ~900 daily users), so fetched
+  # directly from AMO instead of pulling in NUR as a whole extra input for
+  # one small theme. Static theme, no code, just color values - low risk.
+  perfectDarkTheme = pkgs.stdenvNoCC.mkDerivation {
+    pname = "perfectdarktheme";
+    version = "1.1";
+
+    src = pkgs.fetchurl {
+      url = "https://addons.mozilla.org/firefox/downloads/file/3879908/perfectdarktheme-1.1.xpi";
+      sha256 = "a86f1b27e244d1d6330a2202da4789f302f4a8d9dda7e4157d239402a14d60bc";
+    };
+
+    dontUnpack = true;
+
+    installPhase = ''
+      mkdir -p $out
+      cp $src "$out/{47a97a22-13b8-410a-9bd8-2bf689498872}.xpi"
+    '';
+
+    meta = {
+      description = "Dark Theme - static LibreWolf/Firefox theme";
+      homepage = "https://addons.mozilla.org/firefox/addon/perfectdarktheme/";
+    };
+  };
+in
+{
+  programs.librewolf = {
+    enable = true;
+
+    profiles.default = {
+      isDefault = true;
+
+      # Curated from the real prefs.js - only settings that read as genuine
+      # deliberate choices, not LibreWolf's own hardened defaults or
+      # ephemeral runtime state (timestamps, telemetry cache, sync
+      # checkpoints, toolbar layout, etc all excluded).
+      settings = {
+        # Auto-enable extensions.packages below without a manual approval
+        # step (recommended by the module docs for declarative extensions).
+        "extensions.autoDisableScopes" = 0;
+        # Forces websites to render dark regardless of system preference.
+        "layout.css.prefers-color-scheme.content-override" = 0;
+        # LibreWolf defaults this to true; explicitly off here since it was
+        # off in the real profile (likely because RFP breaks some sites).
+        "privacy.resistFingerprinting" = false;
+        "sidebar.visibility" = "hide-sidebar";
+        "privacy.sanitize.sanitizeOnShutdown" = false;
+      };
+
+      extensions.packages = [ perfectDarkTheme ];
+
+      search = {
+        force = true;
+        default = "ddg";
+        engines = {
+          google.metaData.hidden = true;
+          bing.metaData.hidden = true;
+          amazondotcom.metaData.hidden = true;
+          ebay.metaData.hidden = true;
+          twitter.metaData.hidden = true;
+        };
+      };
+    };
+  };
+}

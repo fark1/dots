@@ -1,6 +1,10 @@
 { config, pkgs, lib, ... }:
 
 {
+  imports = [
+    ./browser.nix
+  ];
+
   home.username = "fark";
   home.homeDirectory = "/home/fark";
   home.stateVersion = "26.05";
