@@ -11,7 +11,8 @@
     ];
 
   # Bootloader.
-  boot.loader.systemd-boot.enable = true;
+  boot.loader.limine.enable = true;
+  boot.loader.limine.efiSupport = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -68,6 +69,25 @@
   nixpkgs.config.allowUnfree = true;
 
   programs.labwc.enable = true;
+
+  # Auto-login straight into labwc via ly, no password prompt.
+  # Fine for a personal/VM box; revisit for a shared machine.
+  services.displayManager.ly.enable = true;
+  services.displayManager.defaultSession = "labwc";
+  services.displayManager.autoLogin.enable = true;
+  services.displayManager.autoLogin.user = "fark";
+
+  # PipeWire audio, managed declaratively (the autostart script in
+  # common/labwc/autostart skips its own manual pipewire launch when
+  # it detects systemd, so this is the only place it's started here).
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+    wireplumber.enable = true;
+  };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget

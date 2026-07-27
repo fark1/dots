@@ -1,11 +1,15 @@
 #!/bin/sh
 
-# Audio (PipeWire) - runs in user session so XDG_RUNTIME_DIR is set
-pipewire &
-sleep 1 && wireplumber &
-sleep 2 && pipewire -c pipewire-pulse.conf &
+# Audio (PipeWire) - manual launch only needed on non-systemd inits
+# (e.g. Artix/OpenRC). On systemd-managed systems (NixOS, etc.) PipeWire
+# is already started via user services, so skip it there.
+if [ ! -d /run/systemd/system ]; then
+  pipewire &
+  sleep 1 && wireplumber &
+  sleep 2 && pipewire -c pipewire-pulse.conf &
+fi
 
-# Wallpaper
-swaybg -i /home/fark/Downloads/wallhaven-nmdpyk_1920x1080.png &
+# Wallpaper (repo-relative path, portable across machines)
+swaybg -i "$HOME/.config/dots/common/wallpapers/wallhaven-nmdpyk_1920x1080.png" &
 
 quickshell &
