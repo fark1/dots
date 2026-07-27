@@ -14,6 +14,8 @@
     font-awesome
     fairfax-hd
     swaybg
+    foot
+    
   ];
 
   # Applies common/ from the dotfiles repo via stow on every activation.
