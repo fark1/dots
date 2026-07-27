@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# Audio (PipeWire) - runs in user session so XDG_RUNTIME_DIR is set
+pipewire &
+sleep 1 && wireplumber &
+sleep 2 && pipewire -c pipewire-pulse.conf &
+
+# Wallpaper
+swaybg -i /home/fark/Downloads/wallhaven-nmdpyk_1920x1080.png &
+
+quickshell &
