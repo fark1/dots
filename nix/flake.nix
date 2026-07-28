@@ -38,7 +38,7 @@
 
       mkHost = name: nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        specialArgs = { inherit inputs; };
+        specialArgs = { inherit inputs; hostName = name; };
         modules = [
           ./configuration.nix
           (hostsDir + "/${name}/hardware-configuration.nix")

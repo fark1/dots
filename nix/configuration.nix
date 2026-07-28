@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, lib, inputs, ... }:
+{ config, pkgs, lib, inputs, hostName, ... }:
 
 {
   imports =
@@ -36,7 +36,9 @@
     boot.kernelPackages = lib.mkForce pkgs.linuxPackages_zen;
   };
 
-  networking.hostName = "nixos"; # Define your hostname.
+  # Derived from the hosts/<name>/ folder name (see flake.nix specialArgs) -
+  # never hand-edit this, name the host directory instead.
+  networking.hostName = hostName;
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
