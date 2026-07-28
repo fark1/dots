@@ -64,7 +64,7 @@
   users.users."fark" = {
     isNormalUser = true;
     description = "fark";
-    extraGroups = [ "networkmanager" "wheel" "ydotool" "corectrl" ];
+    extraGroups = [ "networkmanager" "wheel" "ydotool" "corectrl" "libvirtd" ];
     packages = with pkgs; [ ];
   };
 
@@ -77,6 +77,11 @@
   # "corectrl" group (see users.users.fark.extraGroups above) to run without
   # a password prompt each time.
   programs.corectrl.enable = true;
+
+  # VM testing (same workflow used to validate this whole config). Requires
+  # membership in the "libvirtd" group (see users.users.fark.extraGroups).
+  virtualisation.libvirtd.enable = true;
+  programs.virt-manager.enable = true;
 
   # Auto-login straight into labwc via ly, no password prompt.
   # Fine for a personal/VM box; revisit for a shared machine.
@@ -131,6 +136,7 @@
     adwaita-fonts
     freefont_ttf
     noto-fonts
+    noto-fonts-extra
     noto-fonts-color-emoji
     dejavu_fonts
     font-awesome
@@ -160,6 +166,7 @@
     # Ported from the Artix pacman -Qe list (explicitly-installed packages).
     # Themes (phinger-cursors comes in via home.pointerCursor in home.nix)
     adw-gtk3
+    gradience
     # General utilities
     btop
     rsync
@@ -170,6 +177,7 @@
     ntfs3g
     alsa-utils
     vulkan-tools
+    tixati
     config.boot.kernelPackages.cpupower
     # Dev tooling
     clang
