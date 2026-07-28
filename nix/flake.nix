@@ -8,11 +8,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Gaming: CachyOS kernel (via Chaotic-Nyx), Proton-GE, Proton-CachyOS,
-    # CachyOS-Settings port. chaotic intentionally does NOT follow our
-    # nixpkgs - its kernel binaries are built against a specific nixpkgs
-    # revision for guaranteed binary cache hits, so leave it on its own pin.
-    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
+    # Gaming: Proton-GE, Proton-CachyOS, CachyOS-Settings port.
     proton-ge = {
       url = "github:Daaboulex/proton-ge-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -46,7 +42,6 @@
         modules = [
           ./configuration.nix
           (hostsDir + "/${name}/hardware-configuration.nix")
-          inputs.chaotic.nixosModules.default
           home-manager.nixosModules.home-manager
           {
             home-manager.useGlobalPkgs = true;

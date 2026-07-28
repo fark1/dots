@@ -27,16 +27,13 @@
   # Extra selectable boot entry (Limine menu) for the Zen kernel, alongside
   # the default linuxPackages_latest above. cachyos isn't packaged in
   # nixpkgs, so it's not an option here the way it is on the Artix box.
+  # (A third CachyOS-kernel specialisation was attempted via community
+  # flakes - xddxdd/nix-cachyos-kernel, then Chaotic-Nyx - but both hit
+  # binary-cache trust/timing issues that forced full source rebuilds of
+  # rustc and other heavy packages. Reverted; revisit later with more
+  # headroom.)
   specialisation.zen.configuration = {
     boot.kernelPackages = lib.mkForce pkgs.linuxPackages_zen;
-  };
-
-  # Third boot entry: CachyOS kernel, via Chaotic-Nyx (inputs.chaotic,
-  # imported as a module in flake.nix). Its binary cache is configured
-  # automatically by that module - no manual substituters/overlay needed
-  # here, unlike the previous xddxdd/nix-cachyos-kernel attempt.
-  specialisation.cachyos.configuration = {
-    boot.kernelPackages = lib.mkForce pkgs.linuxPackages_cachyos;
   };
 
   networking.hostName = "nixos"; # Define your hostname.
