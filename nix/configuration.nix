@@ -136,6 +136,7 @@
     ubuntu-classic
     fairfax-hd
     scientifica
+    fairfax
   ];
 
   # List packages installed in system profile. To search, run:
@@ -152,9 +153,8 @@
     hicolor-icon-theme
 
     # Ported from the Artix pacman -Qe list (explicitly-installed packages).
-    # Themes/cursors
+    # Themes (phinger-cursors comes in via home.pointerCursor in home.nix)
     adw-gtk3
-    phinger-cursors
     # General utilities
     btop
     rsync

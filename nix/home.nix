@@ -9,6 +9,18 @@
   home.homeDirectory = "/home/fark";
   home.stateVersion = "26.05";
 
+  # Cursor theme for every app - labwc's own environment file (common/labwc)
+  # already sets XCURSOR_THEME/XCURSOR_SIZE for Wayland/XWayland clients;
+  # this covers GTK apps' internal cursor-theme setting plus the
+  # ~/.icons/default symlink some non-Wayland-aware tools still look for.
+  home.pointerCursor = {
+    package = pkgs.phinger-cursors;
+    name = "phinger-cursors-dark";
+    size = 24;
+    gtk.enable = true;
+    x11.enable = true;
+  };
+
   home.packages = with pkgs; [
     quickshell
     alacritty

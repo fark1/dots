@@ -1,4 +1,4 @@
-XCURSOR_THEME=default
+XCURSOR_THEME=phinger-cursors-dark
 XCURSOR_SIZE=24
 XDG_CURRENT_DESKTOP=labwc
 XDG_SESSION_TYPE=wayland
