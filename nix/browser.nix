@@ -40,7 +40,6 @@ in
       # ephemeral runtime state (timestamps, telemetry cache, sync
       # checkpoints, toolbar layout, etc all excluded).
 
-
       userChrome = ''
         :root {
           --toolbar-bgcolor: #101419 !important;
@@ -61,7 +60,7 @@ in
           --sidebar-text-color: #b6becc !important;
         }
       '';
-    };
+
       settings = {
         # Auto-enable extensions.packages below without a manual approval
         # step (recommended by the module docs for declarative extensions).
