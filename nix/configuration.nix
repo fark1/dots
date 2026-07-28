@@ -18,24 +18,8 @@
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  # Binary cache for nix-cachyos-kernel - without this, its packages (even
-  # cached ones like linuxPackages-cachyos-latest) get compiled from source
-  # locally instead of fetched pre-built. The flake's own nixConfig is
-  # supposed to configure this automatically, but that only applies if the
-  # substituter prompt is interactively accepted, which non-interactive
-  # `sudo nixos-rebuild` never gets a chance to do - hence declaring it here.
-  nix.settings.substituters = [ "https://attic.xuyh0120.win/lantian" ];
-  nix.settings.trusted-public-keys = [ "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" ];
-
   services.openssh.enable = true;
   services.openssh.settings.PasswordAuthentication = true;
-
-  # Adds pkgs.cachyosKernels.* (used by the cachyos specialisation below).
-  # Applied at top level, not inside the specialisation - a specialisation's
-  # configuration doesn't get its own independently-overlaid pkgs, it shares
-  # the outer one, so pkgs.cachyosKernels would be missing if this were
-  # nested in there instead.
-  nixpkgs.overlays = [ inputs.nix-cachyos-kernel.overlays.pinned ];
 
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages_latest;
@@ -47,10 +31,12 @@
     boot.kernelPackages = lib.mkForce pkgs.linuxPackages_zen;
   };
 
-  # Third boot entry: CachyOS kernel, via xddxdd/nix-cachyos-kernel's
-  # pinned overlay (has its own binary cache, no local compile needed).
+  # Third boot entry: CachyOS kernel, via Chaotic-Nyx (inputs.chaotic,
+  # imported as a module in flake.nix). Its binary cache is configured
+  # automatically by that module - no manual substituters/overlay needed
+  # here, unlike the previous xddxdd/nix-cachyos-kernel attempt.
   specialisation.cachyos.configuration = {
-    boot.kernelPackages = lib.mkForce pkgs.cachyosKernels.linuxPackages-cachyos-latest;
+    boot.kernelPackages = lib.mkForce pkgs.linuxPackages_cachyos;
   };
 
   networking.hostName = "nixos"; # Define your hostname.
