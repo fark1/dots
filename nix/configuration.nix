@@ -136,7 +136,6 @@
     adwaita-fonts
     freefont_ttf
     noto-fonts
-    noto-fonts-extra
     noto-fonts-color-emoji
     dejavu_fonts
     font-awesome
@@ -166,7 +165,7 @@
     # Ported from the Artix pacman -Qe list (explicitly-installed packages).
     # Themes (phinger-cursors comes in via home.pointerCursor in home.nix)
     adw-gtk3
-    gradience
+    
     # General utilities
     btop
     rsync

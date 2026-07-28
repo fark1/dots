@@ -39,6 +39,29 @@ in
       # deliberate choices, not LibreWolf's own hardened defaults or
       # ephemeral runtime state (timestamps, telemetry cache, sync
       # checkpoints, toolbar layout, etc all excluded).
+
+
+      userChrome = ''
+        :root {
+          --toolbar-bgcolor: #101419 !important;
+          --toolbar-color: #b6becc !important;
+          --lwt-accent-color: #0e1217 !important;
+          --lwt-accent-color-inactive: #0d1014 !important;
+          --toolbar-field-background-color: #15191e !important;
+          --toolbar-field-color: #b6becc !important;
+          --toolbar-field-focus-background-color: #101419 !important;
+          --tab-line-color: #70a5eb !important;
+          --lwt-toolbar-field-highlight: #70a5eb !important;
+          --lwt-toolbar-field-highlight-text: #101419 !important;
+          --arrowpanel-background: #101419 !important;
+          --arrowpanel-color: #b6becc !important;
+          --arrowpanel-border-color: #70a5eb !important;
+          --button-bgcolor: #282e33 !important;
+          --sidebar-background-color: #22194d !important;
+          --sidebar-text-color: #b6becc !important;
+        }
+      '';
+    };
       settings = {
         # Auto-enable extensions.packages below without a manual approval
         # step (recommended by the module docs for declarative extensions).
