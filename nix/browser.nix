@@ -59,12 +59,37 @@ in
           --sidebar-background-color: #22194d !important;
           --sidebar-text-color: #b6becc !important;
         }
+
+        /* Fallback: hit chrome elements directly so theming doesn't
+           depend on extensions.activeThemeID actually taking effect. */
+        #navigator-toolbox,
+        #TabsToolbar,
+        #nav-bar,
+        #PersonalToolbar {
+          background-color: #101419 !important;
+          color: #b6becc !important;
+        }
+
+        #tabbrowser-tabs .tabbrowser-tab {
+          color: #b6becc !important;
+        }
+
+        #urlbar,
+        #searchbar {
+          background-color: #15191e !important;
+          color: #b6becc !important;
+        }
       '';
 
       settings = {
         # Auto-enable extensions.packages below without a manual approval
         # step (recommended by the module docs for declarative extensions).
         "extensions.autoDisableScopes" = 0;
+        # Explicitly activate the dark theme extension - without this,
+        # lwtheme never gets set to true and most --lwt-*/--toolbar-*
+        # variables in userChrome are silently ignored (only the urlbar
+        # picks them up unconditionally, which is why only that changed).
+        "extensions.activeThemeID" = "{47a97a22-13b8-410a-9bd8-2bf689498872}";
         # Forces websites to render dark regardless of system preference.
         "layout.css.prefers-color-scheme.content-override" = 0;
         # LibreWolf defaults this to true; explicitly off here since it was
