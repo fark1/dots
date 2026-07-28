@@ -35,6 +35,7 @@
     pulseaudio
     pavucontrol
     wlr-randr
+    vscode
   ];
 
   # Applies common/ from the dotfiles repo via stow on every activation.

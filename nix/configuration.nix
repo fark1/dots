@@ -64,7 +64,7 @@
   users.users."fark" = {
     isNormalUser = true;
     description = "fark";
-    extraGroups = [ "networkmanager" "wheel" "ydotool" ];
+    extraGroups = [ "networkmanager" "wheel" "ydotool" "corectrl" ];
     packages = with pkgs; [ ];
   };
 
@@ -72,6 +72,11 @@
   nixpkgs.config.allowUnfree = true;
 
   programs.labwc.enable = true;
+
+  # GPU/CPU overclock + fan curve control panel. Requires membership in the
+  # "corectrl" group (see users.users.fark.extraGroups above) to run without
+  # a password prompt each time.
+  programs.corectrl.enable = true;
 
   # Auto-login straight into labwc via ly, no password prompt.
   # Fine for a personal/VM box; revisit for a shared machine.
