@@ -48,6 +48,10 @@
   # Enable networking via dhcpcd (plain DHCP client, no NetworkManager daemon)
   networking.useDHCP = true;
 
+
+  programs.nix-ld.enable = true;
+
+
   # Set your time zone.
   time.timeZone = "Europe/Skopje";
 
