@@ -144,7 +144,7 @@
       <action name="Execute"><command>fuzzel</command></action>
     </keybind>
     <keybind key="W-t">
-      <action name="Execute"><command>alacritty</command></action>
+      <action name="Execute"><command>foot</command></action>
     </keybind>
     <keybind key="W-p">
       <action name="Execute"><command>bash -c 'grim -g "$(slurp)" $HOME/scrots/$(date +%Y%m%d_%H%M%S).png'</command></action>
