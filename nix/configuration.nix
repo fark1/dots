@@ -18,8 +18,6 @@
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  services.openssh.enable = true;
-  services.openssh.settings.PasswordAuthentication = true;
 
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages_latest;
@@ -71,6 +69,9 @@
     extraGroups = [ "networkmanager" "wheel" "ydotool" "corectrl" "libvirtd" ];
     packages = with pkgs; [ ];
   };
+
+  nix.settings.trusted-users=[ "fark" ] ;
+
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -157,6 +158,7 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [ # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     wget
+    nh
     fastfetch
     git
     wayland
