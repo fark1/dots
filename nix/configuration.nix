@@ -135,7 +135,6 @@
   # Games/Proton commonly need this raised past the kernel default;
   # Steam's own client warns about it if it's too low.
   boot.kernel.sysctl."vm.max_map_count" = 2147483642;
-  systemd.settings.Manager.DefaultLimitNOFILE = 1048576;
 
   # Portals: screen sharing, file pickers, etc for Wayland apps. labwc's own
   # module sets a default backend preference but doesn't enable xdg.portal
