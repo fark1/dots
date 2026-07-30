@@ -10,9 +10,9 @@ let
 
     nh os switch --update-input nixpkgs /home/fark/.config/dots/nix
 
-    # --keep 2 matches boot.loader.limine.maxGenerations so the boot menu
+    # --keep 3 matches boot.loader.limine.maxGenerations so the boot menu
     # and generation cleanup stay in sync.
-    nh clean all --keep 2
+    nh clean all --keep 3
   '';
 in
 {

@@ -17,10 +17,10 @@
   boot.loader.limine.enable = true;
   boot.loader.limine.efiSupport = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  # Keep 2 boot-menu entries per generation - matches the --keep 2 used by
+  # Keep 3 boot-menu entries per generation - matches the --keep 3 used by
   # `nh clean all` in the nixos-update script (packages/shell.nix) so the
   # Limine menu and the actual kept generations stay in sync.
-  boot.loader.limine.maxGenerations = 2;
+  boot.loader.limine.maxGenerations = 3;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
