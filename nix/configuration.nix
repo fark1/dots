@@ -185,6 +185,7 @@
     nasm
     go
     scdoc
+    gcc
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
