@@ -187,7 +187,11 @@
     scdoc
     gcc
   ];
+  
 
+
+  environment.variables.NH_FLAKE = "/home/fark/.config/dots/nix";
+  
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
