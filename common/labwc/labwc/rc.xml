@@ -149,7 +149,12 @@
     <keybind key="W-p">
       <action name="Execute"><command>bash -c 'grim -g "$(slurp)" $HOME/scrots/$(date +%Y%m%d_%H%M%S).png'</command></action>
     </keybind>
+    <!-- Screenshot region to clipboard -->
     <keybind key="W-S-s">
+      <action name="Execute"><command>bash -c 'grim -g "$(slurp)" - | wl-copy'</command></action>
+    </keybind>
+    <!-- Screenshot region, saved to folder -->
+    <keybind key="W-S-p">
       <action name="Execute"><command>bash -c 'grim -g "$(slurp)" $HOME/scrots/$(date +%Y%m%d_%H%M%S).png'</command></action>
     </keybind>
     <keybind key="W-b">

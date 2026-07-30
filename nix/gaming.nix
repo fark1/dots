@@ -25,5 +25,7 @@
     mangohud
     wine
     winetricks
+    rpcs3
+    pcsx2
   ];
 }

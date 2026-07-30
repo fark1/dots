@@ -32,6 +32,7 @@
     fuzzel
     grim
     slurp
+    wl-clipboard
     pulseaudio
     pavucontrol
     wlr-randr
