@@ -9,12 +9,18 @@
     [ # Hardware-specific config is injected per-host by flake.nix, not
       # imported here - keeps this file identical across every machine.
       ./gaming.nix
+      ./packages/fonts.nix
+      ./packages/shell.nix
     ];
 
   # Bootloader.
   boot.loader.limine.enable = true;
   boot.loader.limine.efiSupport = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  # Keep 2 boot-menu entries per generation - matches the --keep 2 used by
+  # `nh clean all` in the nixos-update script (packages/shell.nix) so the
+  # Limine menu and the actual kept generations stay in sync.
+  boot.loader.limine.maxGenerations = 2;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
@@ -131,27 +137,6 @@
     enable = true;
     extraPortals = [ pkgs.xdg-desktop-portal-wlr ];
   };
-
-  # Fonts ported from the Artix machine's pacman/manual font install.
-  # Fairfax Hax isn't here - it's not packaged in nixpkgs at all (see
-  # earlier investigation), only used by common/foot and common/alacritty
-  # for now.
-  fonts.packages = with pkgs; [
-    adwaita-fonts
-    freefont_ttf
-    noto-fonts
-    noto-fonts-color-emoji
-    dejavu_fonts
-    font-awesome
-    nerd-fonts.jetbrains-mono
-    liberation_ttf
-    roboto-mono
-    symbola
-    ubuntu-classic
-    fairfax-hd
-    scientifica
-    fairfax
-  ];
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
