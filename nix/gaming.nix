@@ -27,5 +27,6 @@
     winetricks
     rpcs3
     pcsx2
+    gamescope 
   ];
 }
