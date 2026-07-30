@@ -92,7 +92,6 @@
   # Fine for a personal/VM box; revisit for a shared machine.
   services.displayManager.ly.enable = true;
   services.displayManager.defaultSession = "labwc";
-  services.displayManager.autoLogin.enable = true;
   services.displayManager.autoLogin.user = "fark";
 
   # PipeWire audio, managed declaratively (the autostart script in
