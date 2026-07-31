@@ -21,6 +21,12 @@
       url = "github:Daaboulex/cachyos-settings-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # SF Pro font family (community redistribution).
+    sf-family = {
+      url = "github:fark1/sf-family-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, nixpkgs, home-manager, ... }@inputs:

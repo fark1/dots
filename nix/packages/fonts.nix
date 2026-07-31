@@ -1,11 +1,11 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 
 {
   # Fonts ported from the Artix machine's pacman/manual font install.
   # Fairfax Hax isn't here - it's not packaged in nixpkgs at all (see
   # earlier investigation), only used by common/foot and common/alacritty
   # for now.
-  fonts.packages = with pkgs; [
+  fonts.packages = (with pkgs; [
     adwaita-fonts
     freefont_ttf
     noto-fonts
@@ -21,5 +21,7 @@
     scientifica
     fairfax
     miracode
+  ]) ++ [
+    inputs.sf-family.packages.${pkgs.system}.default
   ];
 }
