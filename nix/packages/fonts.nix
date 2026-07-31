@@ -20,5 +20,6 @@
     fairfax-hd
     scientifica
     fairfax
+    miracode
   ];
 }
