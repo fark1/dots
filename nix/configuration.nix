@@ -189,6 +189,17 @@
   
 
 
+
+ systemd.mounts = [{
+    what = "/dev/disk/by-uuid/2E74F51E74F4E98B";
+    where = "/mnt/games";
+    type = "ntfs3";
+    options = "uid=1000,gid=100,nofail";
+    wantedBy = [ "multi-user.target" ];
+ }];
+
+ systemd.tmpfiles.rules = [ "d /mnt/games 0755 fark users -" ];
+
   environment.variables.NH_FLAKE = "/home/fark/.config/dots/nix";
 
   # Some programs need SUID wrappers, can be configured further or are
