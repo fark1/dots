@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Io
 
@@ -131,7 +132,7 @@ ShellRoot {
                 color: "#07080a"
             }
 
-            // ── Left: workspace dots ──────────────────────────────────
+            // ── Left: workspace shapes ──────────────────────────────────
             Row {
                 anchors {
                     left: parent.left
@@ -141,33 +142,100 @@ ShellRoot {
                 spacing: 14
 
                 Repeater {
-                    model: 4
+                    model: ["triangle", "square", "hexagon", "pentagon"]
 
                     Item {
-                        width:  dotLabel.implicitWidth + 6
+                        id: wsIcon
+
+                        required property string modelData
+                        required property int    index
+
+                        readonly property int  wsNum:  index + 1
+                        readonly property bool active: wsNum === bar.activeWs
+
+                        // per-shape inactive color: triangle, square, hexagon, pentagon
+                        readonly property var    inactiveColors: ["#e05f65", "#78dba9", "#f1cf8a", "#c68aee"]
+                        readonly property string inactiveColor:  inactiveColors[index]
+
+                        width:  20
                         height: 24
 
-                        Text {
-                            id: dotLabel
-                            readonly property int  wsNum:  index + 1
-                            readonly property bool active: wsNum === bar.activeWs
+                        // Solid fill: the shape's own color when inactive, black
+                        // when active - the outline layer below adds the accent
+                        // color back on top so the selected icon isn't just a
+                        // flat black blob.
+                        Image {
+                            id: shapeSource
                             anchors.centerIn: parent
-                            text:  active ? "*" : "."
-                            color: active ? "#94F7C5" : "#ffffff"
-                            font.family:    "Fairfax HD"
-                            font.pixelSize: 11
-                            renderType:     Text.NativeRendering
+                            width:  14
+                            height: 14
+                            source: Qt.resolvedUrl("icons/" + wsIcon.modelData + ".svg")
+                            sourceSize: Qt.size(14, 14)
+                            visible: false
+                        }
+
+                        MultiEffect {
+                            id: shapeEffect
+                            anchors.fill: shapeSource
+                            source: shapeSource
+                            colorization: 1.0
+                            colorizationColor: wsIcon.active ? "#000000" : wsIcon.inactiveColor
+
+                            Behavior on colorizationColor {
+                                ColorAnimation { duration: 150 }
+                            }
+
+                            RotationAnimation {
+                                id: spinAnim
+                                target: shapeEffect
+                                from: 0
+                                to: 360
+                                duration: 400
+                                easing.type: Easing.OutBack
+                            }
+                        }
+
+                        // Outline: only shown for the active workspace, drawn on
+                        // top of the black fill in the shape's own accent color.
+                        Image {
+                            id: outlineSource
+                            anchors.centerIn: parent
+                            width:  14
+                            height: 14
+                            source: Qt.resolvedUrl("icons/" + wsIcon.modelData + "-outline.svg")
+                            sourceSize: Qt.size(14, 14)
+                            visible: false
+                        }
+
+                        MultiEffect {
+                            id: outlineEffect
+                            anchors.fill: outlineSource
+                            source: outlineSource
+                            colorization: 1.0
+                            colorizationColor: wsIcon.inactiveColor
+                            visible: wsIcon.active
+
+                            RotationAnimation {
+                                id: outlineSpinAnim
+                                target: outlineEffect
+                                from: 0
+                                to: 360
+                                duration: 400
+                                easing.type: Easing.OutBack
+                            }
                         }
 
                         MouseArea {
                             anchors.fill: parent
                             cursorShape:  Qt.PointingHandCursor
                             onClicked: {
-                                bar.activeWs = dotLabel.wsNum
+                                bar.activeWs = wsIcon.wsNum
                                 if (!wsSwitcher.running) {
-                                    wsSwitcher.targetWs = dotLabel.wsNum
+                                    wsSwitcher.targetWs = wsIcon.wsNum
                                     wsSwitcher.running  = true
                                 }
+                                spinAnim.restart()
+                                outlineSpinAnim.restart()
                             }
                         }
                     }
@@ -184,8 +252,9 @@ ShellRoot {
 
                 text:  h12 + ":" + mins + " " + ampm + "  " + Qt.formatDate(clock.date, "dd MMM yyyy")
                 color: "#6b93c2"
-                font.family:    "Fairfax HD"
-                font.pixelSize: 11
+                font.family:    "SF Pro Display"
+                font.weight:    600
+                font.pixelSize: 12
                 renderType:     Text.NativeRendering
                 height: 24
                 verticalAlignment: Text.AlignVCenter

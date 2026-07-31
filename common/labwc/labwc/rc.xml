@@ -13,7 +13,9 @@
   </focus>
 
   <desktops number="4">
-    <popupTime>875</popupTime>
+    <!-- 0 disables the native workspace-switch OSD entirely - quickshell's
+         own bar already shows the active workspace via the shape icons. -->
+    <popupTime>0</popupTime>
     <names>
       <name>1</name>
       <name>2</name>

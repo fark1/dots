@@ -118,6 +118,19 @@
   # default (/run/ydotoold/socket) - keeps common/ unchanged across OSes.
   programs.ydotool.enable = true;
   environment.variables.YDOTOOL_SOCKET = lib.mkForce "/tmp/.ydotool_socket";
+  # The upstream module hardens ydotoold with PrivateTmp=true, which puts
+  # its /tmp/.ydotool_socket in an isolated mount namespace invisible to
+  # every client (confirmed: ls/ydotool key against it both fail while the
+  # daemon itself shows "active"). Force it off so the socket is actually
+  # reachable at the shared path everything above expects. The unit also
+  # has ProtectSystem=strict, which makes the *real* / read-only once
+  # PrivateTmp stops giving it a private writable tmpfs - without this,
+  # ydotoold fails to bind with "Read-only file system".
+  systemd.services.ydotoold.serviceConfig = {
+    PrivateTmp = lib.mkForce false;
+    ReadWritePaths = [ "/tmp" ];
+  };
+
 
   # zsh: home.nix stows .zshrc/.zshenv, but the shell itself still needs to
   # be installed and registered in /etc/shells.
