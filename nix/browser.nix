@@ -97,6 +97,7 @@ in
         "privacy.resistFingerprinting" = false;
         "sidebar.visibility" = "hide-sidebar";
         "privacy.sanitize.sanitizeOnShutdown" = false;
+        "webgl.disabled" = false; 
       };
 
       extensions.packages = [ perfectDarkTheme ];

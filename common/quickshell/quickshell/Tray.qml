@@ -67,7 +67,7 @@ Item {
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
                     onClicked: mouse => {
                         if (trayIcon.modelData.hasMenu) {
-                            root.openItem = trayIcon.modelData
+                            root.openItem = (root.openItem === trayIcon.modelData) ? null : trayIcon.modelData
                         } else if (mouse.button === Qt.LeftButton) {
                             trayIcon.modelData.activate()
                         }
@@ -88,7 +88,13 @@ Item {
         visible: root.openItem !== null
         color: "transparent"
         implicitWidth: 180
-        implicitHeight: Math.min(menuColumn.implicitHeight, 400)
+        // Fixed size, same reasoning as NotificationCenter's historyPopup:
+        // a menu whose contents arrive asynchronously item-by-item (Steam's
+        // DBusMenu fetch, see the log - 16 separate layout updates) would
+        // otherwise resize this mapped Wayland popup surface on every single
+        // item, which corrupts the rendered buffer instead of resizing
+        // cleanly. Content scrolls inside a Flickable instead.
+        implicitHeight: 300
 
         anchor {
             window: root.barWindow
@@ -105,47 +111,56 @@ Item {
             border.width: 1
             border.color: "#22262c"
 
-            Column {
-                id: menuColumn
-                anchors { left: parent.left; right: parent.right; top: parent.top; margins: 4 }
+            Flickable {
+                anchors.fill: parent
+                anchors.margins: 4
+                contentWidth: width
+                contentHeight: menuColumn.implicitHeight
+                clip: true
+                boundsBehavior: Flickable.StopAtBounds
 
-                Repeater {
-                    model: menuOpener.children
+                Column {
+                    id: menuColumn
+                    width: parent.width
 
-                    delegate: Item {
-                        id: entryDelegate
+                    Repeater {
+                        model: menuOpener.children
 
-                        required property var modelData
+                        delegate: Item {
+                            id: entryDelegate
 
-                        width: menuColumn.width
-                        height: modelData.isSeparator ? 9 : (entryLabel.implicitHeight + 10)
-                        visible: !modelData.hasChildren
+                            required property var modelData
 
-                        Rectangle {
-                            visible: entryDelegate.modelData.isSeparator
-                            anchors { left: parent.left; right: parent.right; verticalCenter: parent.verticalCenter; margins: 8 }
-                            height: 1
-                            color: "#22262c"
-                        }
+                            width: menuColumn.width
+                            height: modelData.isSeparator ? 9 : (entryLabel.implicitHeight + 10)
+                            visible: !modelData.hasChildren
 
-                        Text {
-                            id: entryLabel
-                            visible: !entryDelegate.modelData.isSeparator
-                            anchors { left: parent.left; right: parent.right; verticalCenter: parent.verticalCenter; leftMargin: 8; rightMargin: 8 }
-                            text: entryDelegate.modelData.text
-                            color: entryDelegate.modelData.enabled ? "#e8e8e8" : "#555555"
-                            font.family: "Fairfax HD"
-                            font.pixelSize: 10
-                            elide: Text.ElideRight
-                        }
+                            Rectangle {
+                                visible: entryDelegate.modelData.isSeparator
+                                anchors { left: parent.left; right: parent.right; verticalCenter: parent.verticalCenter; margins: 8 }
+                                height: 1
+                                color: "#22262c"
+                            }
 
-                        MouseArea {
-                            visible: !entryDelegate.modelData.isSeparator && entryDelegate.modelData.enabled
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                entryDelegate.modelData.triggered()
-                                root.openItem = null
+                            Text {
+                                id: entryLabel
+                                visible: !entryDelegate.modelData.isSeparator
+                                anchors { left: parent.left; right: parent.right; verticalCenter: parent.verticalCenter; leftMargin: 8; rightMargin: 8 }
+                                text: entryDelegate.modelData.text
+                                color: entryDelegate.modelData.enabled ? "#e8e8e8" : "#555555"
+                                font.family: "Fairfax HD"
+                                font.pixelSize: 10
+                                elide: Text.ElideRight
+                            }
+
+                            MouseArea {
+                                visible: !entryDelegate.modelData.isSeparator && entryDelegate.modelData.enabled
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    entryDelegate.modelData.triggered()
+                                    root.openItem = null
+                                }
                             }
                         }
                     }
