@@ -48,6 +48,13 @@ ShellRoot {
         }
     }
 
+    // ── Volume adjust (Ctrl+Super+scroll over the volume widget) ──────────
+    Process {
+        id: volAdjust
+        property string delta: "+5%"
+        command: ["pactl", "set-sink-volume", "@DEFAULT_SINK@", delta]
+    }
+
     // ── pavucontrol launcher ──────────────────────────────────────────────
     Process {
         id: pavuProc
@@ -170,7 +177,7 @@ ShellRoot {
                             width:  14
                             height: 14
                             source: Qt.resolvedUrl("icons/" + wsIcon.modelData + ".svg")
-                            sourceSize: Qt.size(14, 14)
+                            sourceSize: Qt.size(28, 28)
                             visible: false
                         }
 
@@ -203,7 +210,7 @@ ShellRoot {
                             width:  14
                             height: 14
                             source: Qt.resolvedUrl("icons/" + wsIcon.modelData + "-outline.svg")
-                            sourceSize: Qt.size(14, 14)
+                            sourceSize: Qt.size(28, 28)
                             visible: false
                         }
 
@@ -250,7 +257,7 @@ ShellRoot {
                 readonly property string ampm: clock.hours >= 12 ? "PM" : "AM"
                 readonly property string mins: clock.minutes < 10 ? "0" + clock.minutes : "" + clock.minutes
 
-                text:  h12 + ":" + mins + " " + ampm + "  " + Qt.formatDate(clock.date, "dd MMM yyyy")
+                text:  h12 + ":" + mins + " " + ampm
                 color: "#6b93c2"
                 font.family:    "SF Pro Display"
                 font.weight:    600
@@ -278,24 +285,79 @@ ShellRoot {
                 }
 
                 Item {
-                    width:  volLabel.implicitWidth + 12
+                    id: volWidget
+
+                    property bool hovered: false
+
+                    // icon + left/right padding, plus the percentage label's
+                    // width only when hover-revealed
+                    width:  14 + 12 + (hovered ? volLabel.implicitWidth + 6 : 0)
                     height: 24
+
+                    Behavior on width {
+                        NumberAnimation { duration: 150; easing.type: Easing.InOutCubic }
+                    }
+
+                    Image {
+                        id: volIconSource
+                        anchors { left: parent.left; leftMargin: 6; verticalCenter: parent.verticalCenter }
+                        width:  14
+                        height: 14
+                        source: Qt.resolvedUrl("icons/volume.svg")
+                        sourceSize: Qt.size(28, 28)
+                        visible: false
+                    }
+
+                    MultiEffect {
+                        id: volIconEffect
+                        anchors.fill: volIconSource
+                        source: volIconSource
+                        colorization: 1.0
+                        colorizationColor: "#aaaaaa"
+                    }
 
                     Text {
                         id: volLabel
-                        anchors.centerIn: parent
-                        text:  "vol " + bar.volume
+                        anchors { left: volIconEffect.right; leftMargin: 6; verticalCenter: parent.verticalCenter }
+                        text:  bar.volume
                         color: "#aaaaaa"
                         font.family:    "Fairfax HD"
                         font.pixelSize: 11
                         renderType:     Text.NativeRendering
+                        opacity: volWidget.hovered ? 1.0 : 0.0
+                        visible: opacity > 0
+
+                        Behavior on opacity {
+                            NumberAnimation { duration: 150 }
+                        }
                     }
 
                     MouseArea {
                         anchors.fill: parent
                         cursorShape:  Qt.PointingHandCursor
-                        onClicked:    if (!pavuProc.running) pavuProc.running = true
+                        hoverEnabled: true
+                        onEntered: volWidget.hovered = true
+                        onExited:  volWidget.hovered = false
+                        onClicked: if (!pavuProc.running) pavuProc.running = true
+
+                        onWheel: wheel => {
+                            if (!(wheel.modifiers & Qt.ControlModifier) || !(wheel.modifiers & Qt.MetaModifier))
+                                return
+                            volAdjust.delta = wheel.angleDelta.y > 0 ? "+5%" : "-5%"
+                            if (!volAdjust.running) volAdjust.running = true
+                            if (!volQuery.running) volQuery.running = true
+                        }
                     }
+                }
+
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text:  Qt.formatDate(clock.date, "ddd, dd MMM yyyy")
+                    color: "#6b93c2"
+                    font.family:    "SF Pro Display"
+                    font.weight:    600
+                    font.pixelSize: 12
+                    renderType:     Text.NativeRendering
                 }
             }
         }

@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Effects
 import Quickshell
 
 Item {
@@ -10,22 +11,34 @@ Item {
     readonly property string badgeText: count > 9 ? "9+" : String(count)
     property bool open: false
 
-    width: bellLabel.implicitWidth + 12
+    width: bellEffect.width + 12
     height: 24
 
-    Text {
-        id: bellLabel
+    Image {
+        id: bellSource
         anchors.centerIn: parent
-        text: ""
-        font.family: "Font Awesome 6 Free"
-        font.weight: Font.Black
-        font.pixelSize: 12
-        color: root.count > 0 ? "#94F7C5" : "#ffffff"
+        width: 14
+        height: 14
+        source: Qt.resolvedUrl("icons/bell.svg")
+        sourceSize: Qt.size(28, 28)
+        visible: false
+    }
+
+    MultiEffect {
+        id: bellEffect
+        anchors.fill: bellSource
+        source: bellSource
+        colorization: 1.0
+        colorizationColor: root.count > 0 ? "#94F7C5" : "#ffffff"
+
+        Behavior on colorizationColor {
+            ColorAnimation { duration: 150 }
+        }
     }
 
     Rectangle {
         visible: root.count > 0
-        anchors { right: bellLabel.right; top: bellLabel.top; rightMargin: -7; topMargin: -5 }
+        anchors { right: bellEffect.right; top: bellEffect.top; rightMargin: -7; topMargin: -5 }
         width: Math.max(badgeLabel.implicitWidth + 6, 12)
         height: 12
         radius: 6

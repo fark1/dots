@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Services.SystemTray
 
@@ -8,17 +9,90 @@ Item {
     required property var barWindow
 
     property var openItem: null
+    property bool collapsed: false
+    readonly property int expandedWidth: trayRow.implicitWidth
 
     readonly property int iconSize: 14
 
-    width: trayRow.implicitWidth
+    width: (collapsed ? 0 : expandedWidth) + toggleArea.width + 8
     height: 24
     visible: (SystemTray.items.values ?? []).length > 0
 
+    // Collapsing hides the icon a menu is anchored to - close any open
+    // menu along with it instead of leaving it floating disconnected.
+    onCollapsedChanged: {
+        if (collapsed)
+            openItem = null
+    }
+
+    Behavior on width {
+        NumberAnimation { duration: 220; easing.type: Easing.InOutCubic }
+    }
+
+    Rectangle {
+        // Anchored to trayRow's own bounds (not a magic width computed from
+        // root) so padding stays symmetric on both sides regardless of icon
+        // count - trayRow's width Behavior already animates this along with
+        // it, no separate Behavior needed here.
+        anchors {
+            left: trayRow.left; leftMargin: -5
+            right: trayRow.right; rightMargin: -5
+            top: parent.top; bottom: parent.bottom
+        }
+        radius: 6
+        color: "#94F7C5"
+        opacity: root.collapsed ? 0.0 : 0.15
+
+        Behavior on opacity {
+            NumberAnimation { duration: 140 }
+        }
+    }
+
+    Item {
+        id: toggleArea
+        anchors { left: parent.left; verticalCenter: parent.verticalCenter }
+        width: 16
+        height: 24
+
+        Image {
+            id: arrowSource
+            anchors.centerIn: parent
+            width: 13
+            height: 13
+            source: Qt.resolvedUrl(root.collapsed ? "icons/angle-right.svg" : "icons/angle-down.svg")
+            sourceSize: Qt.size(26, 26)
+            visible: false
+        }
+
+        MultiEffect {
+            id: arrowEffect
+            anchors.fill: arrowSource
+            source: arrowSource
+            colorization: 1.0
+            colorizationColor: "#94F7C5"
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: Qt.PointingHandCursor
+            onClicked: root.collapsed = !root.collapsed
+        }
+    }
+
     Row {
         id: trayRow
-        anchors.verticalCenter: parent.verticalCenter
+        anchors { verticalCenter: parent.verticalCenter; left: toggleArea.right; leftMargin: 3 }
         spacing: 8
+        clip: true
+        width: root.collapsed ? 0 : implicitWidth
+        opacity: root.collapsed ? 0.0 : 1.0
+
+        Behavior on width {
+            NumberAnimation { duration: 220; easing.type: Easing.InOutCubic }
+        }
+        Behavior on opacity {
+            NumberAnimation { duration: 140 }
+        }
 
         Repeater {
             model: SystemTray.items
