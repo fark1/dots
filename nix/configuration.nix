@@ -169,6 +169,7 @@
     emacs
     nano
     foot
+    feh
     adwaita-icon-theme
     hicolor-icon-theme
 
