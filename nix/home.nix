@@ -36,7 +36,6 @@
     pavucontrol
     wlr-randr
     vscode
-    vesktop
   ];
 
   # Applies common/ from the dotfiles repo via stow on every activation.
